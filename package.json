@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "@netlify/blobs": "^0.6.1"
+    "@netlify/blobs": "^0.6.0"
   }
 }
