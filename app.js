@@ -1,8 +1,7 @@
-const STORAGE_KEY = 'kla-volleyball-bracket';
+const STORAGE_URL = '/.netlify/functions/bracket';
 const ACCESS_CODE = 'KLA-ADMIN';
 
 const defaultState = {
-  admin: false,
   seedNames: {
     game1Home: 'Teknika',
     game1Away: 'KLA',
@@ -31,11 +30,12 @@ const defaultState = {
     game6Home: '',
     game6Away: '',
   },
-  championPlayers: '',
+  championPlayers: [],
   mvp: '',
 };
 
-const state = loadState();
+let state = clone(defaultState);
+let saveTimer = null;
 
 const refs = {
   status: document.getElementById('statusMessage'),
@@ -57,34 +57,6 @@ function clone(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
-function loadState() {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  if (!saved) return clone(defaultState);
-  try {
-    const merged = { ...clone(defaultState), ...JSON.parse(saved) };
-    if (!Array.isArray(merged.championPlayers)) {
-      if (typeof merged.championPlayers === 'string') {
-        merged.championPlayers = merged.championPlayers
-          .split(',')
-          .map((name) => name.trim())
-          .filter(Boolean);
-      } else {
-        merged.championPlayers = [];
-      }
-    }
-    merged.mvp = merged.mvp || '';
-    return merged;
-  } catch {
-    return clone(defaultState);
-  }
-}
-
-function persistState() {
-  const payload = { ...state };
-  delete payload.admin;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-}
-
 function setStatus(message, type = 'info') {
   refs.status.textContent = message;
   refs.status.className = `status-message status-${type}`;
@@ -92,6 +64,41 @@ function setStatus(message, type = 'info') {
     refs.status.textContent = '';
     refs.status.className = 'status-message';
   }, 4000);
+}
+
+async function loadRemoteState() {
+  try {
+    const res = await fetch(STORAGE_URL);
+    if (!res.ok) return;
+    const data = await res.json();
+    if (!data) return;
+    const merged = { ...clone(defaultState), ...data };
+    if (!Array.isArray(merged.championPlayers)) {
+      merged.championPlayers = [];
+    }
+    merged.mvp = merged.mvp || '';
+    state = merged;
+  } catch (error) {
+    console.error('Failed to load remote state', error);
+  }
+}
+
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveRemoteState, 400);
+}
+
+async function saveRemoteState() {
+  const payload = { ...state };
+  try {
+    await fetch(STORAGE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+  } catch (error) {
+    console.error('Failed to save state', error);
+  }
 }
 
 function parseScore(value) {
@@ -163,10 +170,10 @@ function render() {
 
   refs.nameInputs.forEach((input) => {
     const { game, slot, derived } = input.dataset;
+    const key = `${game}${slot === 'home' ? 'Home' : 'Away'}`;
     if (derived === 'true') {
       input.value = names[game]?.[slot] ?? '';
     } else {
-      const key = `${game}${slot === 'home' ? 'Home' : 'Away'}`;
       input.value = state.seedNames[key] ?? '';
     }
   });
@@ -209,7 +216,6 @@ function render() {
 }
 
 function renderChampionPlayersList() {
-  if (!refs.championPlayersList) return;
   refs.championPlayersList.innerHTML = '';
   if (!state.championPlayers.length) {
     const empty = document.createElement('p');
@@ -235,7 +241,7 @@ function renderChampionPlayersList() {
     input.disabled = !state.admin;
     input.addEventListener('input', () => {
       state.championPlayers[index] = input.value;
-      persistState();
+      scheduleSave();
     });
 
     row.append(seed, input);
@@ -243,33 +249,29 @@ function renderChampionPlayersList() {
   });
 }
 
-function enableEditing() {
+function setAdminState(isAdmin) {
+  state.admin = isAdmin;
   document.querySelectorAll('.secured').forEach((input) => {
-    input.disabled = false;
-    if (input.dataset.derived === 'true') {
+    input.disabled = !isAdmin;
+    if (input.dataset?.derived === 'true') {
       input.readOnly = true;
     }
   });
-}
-
-function disableEditing() {
-  document.querySelectorAll('.secured').forEach((input) => {
-    input.disabled = true;
-  });
+  refs.addPlayerButton.disabled = !isAdmin;
+  refs.mvpInput.disabled = !isAdmin;
 }
 
 function attachEvents() {
-  function handleLogin(event) {
+  const handleLogin = (event) => {
     event?.preventDefault();
     if (refs.adminCode.value.trim() === ACCESS_CODE) {
-      state.admin = true;
-      enableEditing();
+      setAdminState(true);
       setStatus('Admin mode enabled', 'success');
       render();
     } else {
       setStatus('Invalid code', 'error');
     }
-  }
+  };
 
   refs.loginButton.addEventListener('click', handleLogin);
   refs.adminCode.addEventListener('keydown', (event) => {
@@ -284,13 +286,10 @@ function attachEvents() {
       return;
     }
     if (confirm('Reset all names, times, and scores?')) {
-      Object.assign(state.seedNames, clone(defaultState.seedNames));
-      Object.assign(state.times, clone(defaultState.times));
-      Object.assign(state.scores, clone(defaultState.scores));
-      state.championPlayers = '';
-      state.mvp = '';
-      persistState();
+      state = clone(defaultState);
+      setAdminState(true);
       render();
+      scheduleSave();
     }
   });
 
@@ -299,7 +298,7 @@ function attachEvents() {
     input.addEventListener('input', () => {
       const key = `${input.dataset.game}${input.dataset.slot === 'home' ? 'Home' : 'Away'}`;
       state.seedNames[key] = input.value.trim();
-      persistState();
+      scheduleSave();
       render();
     });
   });
@@ -307,7 +306,7 @@ function attachEvents() {
   refs.timeInputs.forEach((input) => {
     input.addEventListener('input', () => {
       state.times[input.dataset.game] = input.value;
-      persistState();
+      scheduleSave();
     });
   });
 
@@ -315,32 +314,30 @@ function attachEvents() {
     input.addEventListener('input', () => {
       const key = `${input.dataset.game}${input.dataset.slot === 'home' ? 'Home' : 'Away'}`;
       state.scores[key] = input.value;
-      persistState();
+      scheduleSave();
       render();
     });
   });
+
   refs.addPlayerButton.addEventListener('click', () => {
     if (!state.admin) {
       setStatus('Unlock admin mode to edit players.', 'error');
       return;
     }
     state.championPlayers.push('');
-    persistState();
-    render();
+    renderChampionPlayersList();
+    scheduleSave();
   });
 
   refs.mvpInput.addEventListener('input', () => {
     state.mvp = refs.mvpInput.value;
-    persistState();
+    scheduleSave();
   });
 }
 
-function init() {
-  if (!state.admin) {
-    disableEditing();
-  } else {
-    enableEditing();
-  }
+async function init() {
+  await loadRemoteState();
+  setAdminState(false);
   render();
   attachEvents();
 }
