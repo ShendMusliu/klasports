@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>2025 KLA Volleyball Tournament Bracket</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="page__header">
+        <div>
+          <h1>2025 KLA Volleyball Tournament Bracket</h1>
+          <p>Scores determine who advances. Unlock admin mode to edit teams, times, and results.</p>
+        </div>
+        <div class="page__actions">
+          <button id="clearButton">Reset bracket</button>
+        </div>
+      </header>
+
+      <section class="board">
+        <div class="column column--winners">
+          <p class="column__title">Winner's Bracket</p>
+          <div class="bracket-panel">
+
+          <article class="match" data-game="game1">
+            <div class="match__header match__header--inline">
+              <span>Game 1</span>
+              <input
+                class="time-chip secured"
+                data-type="time"
+                data-game="game1"
+                placeholder="Time"
+                disabled
+              />
+            </div>
+            <div class="team" data-game="game1" data-slot="home">
+              <span class="seed">1</span>
+              <input
+                class="team__name-input secured"
+                data-type="name"
+                data-game="game1"
+                data-slot="home"
+                disabled
+              />
+              <input
+                class="score secured"
+                data-type="score"
+                type="number"
+                min="0"
+                data-game="game1"
+                data-slot="home"
+                disabled
+              />
+            </div>
+            <div class="team" data-game="game1" data-slot="away">
+              <span class="seed">4</span>
+              <input
+                class="team__name-input secured"
+                data-type="name"
+                data-game="game1"
+                data-slot="away"
+                disabled
+              />
+              <input
+                class="score secured"
+                data-type="score"
+                type="number"
+                min="0"
+                data-game="game1"
+                data-slot="away"
+                disabled
+              />
+            </div>
+          </article>
+
+          <article class="match" data-game="game2">
+            <div class="match__header match__header--inline">
+              <span>Game 2</span>
+              <input
+                class="time-chip secured"
+                data-type="time"
+                data-game="game2"
+                placeholder="Time"
+                disabled
+              />
+            </div>
+            <div class="team" data-game="game2" data-slot="home">
+              <span class="seed">2</span>
+              <input
+                class="team__name-input secured"
+                data-type="name"
+                data-game="game2"
+                data-slot="home"
+                disabled
+              />
+              <input
+                class="score secured"
+                data-type="score"
+                type="number"
+                min="0"
+                data-game="game2"
+                data-slot="home"
+                disabled
+              />
+            </div>
+            <div class="team" data-game="game2" data-slot="away">
+              <span class="seed">3</span>
+              <input
+                class="team__name-input secured"
+                data-type="name"
+                data-game="game2"
+                data-slot="away"
+                disabled
+              />
+              <input
+                class="score secured"
+                data-type="score"
+                type="number"
+                min="0"
+                data-game="game2"
+                data-slot="away"
+                disabled
+              />
+            </div>
+          </article>
+
+          <article class="match" data-game="game3">
+            <div class="match__header match__header--inline">
+              <span>Game 3</span>
+              <input
+                class="time-chip secured"
+                data-type="time"
+                data-game="game3"
+                placeholder="Time"
+                disabled
+              />
+            </div>
+            <div class="team" data-game="game3" data-slot="home">
+              <span class="seed">W1</span>
+              <input
+                class="team__name-input"
+                data-type="name"
+                data-game="game3"
+                data-slot="home"
+                data-derived="true"
+                readonly
+              />
+              <input
+                class="score secured"
+                data-type="score"
+                type="number"
+                min="0"
+                data-game="game3"
+                data-slot="home"
+                disabled
+              />
+            </div>
+            <div class="team" data-game="game3" data-slot="away">
+              <span class="seed">W2</span>
+              <input
+                class="team__name-input"
+                data-type="name"
+                data-game="game3"
+                data-slot="away"
+                data-derived="true"
+                readonly
+              />
+              <input
+                class="score secured"
+                data-type="score"
+                type="number"
+                min="0"
+                data-game="game3"
+                data-slot="away"
+                disabled
+              />
+            </div>
+          </article>
+          </div>
+        </div>
+
+        <div class="column column--losers">
+          <p class="column__title">Loser's Bracket</p>
+          <div class="bracket-panel">
+
+          <article class="match match--tall" data-game="game4">
+            <div class="match__header match__header--inline">
+              <span>Game 4</span>
+              <input
+                class="time-chip secured"
+                data-type="time"
+                data-game="game4"
+                placeholder="Time"
+                disabled
+              />
+            </div>
+            <div class="team" data-game="game4" data-slot="home">
+              <span class="seed">L1</span>
+              <input
+                class="team__name-input"
+                data-type="name"
+                data-game="game4"
+                data-slot="home"
+                data-derived="true"
+                readonly
+              />
+              <input
+                class="score secured"
+                data-type="score"
+                type="number"
+                min="0"
+                data-game="game4"
+                data-slot="home"
+                disabled
+              />
+            </div>
+            <div class="team" data-game="game4" data-slot="away">
+              <span class="seed">L2</span>
+              <input
+                class="team__name-input"
+                data-type="name"
+                data-game="game4"
+                data-slot="away"
+                data-derived="true"
+                readonly
+              />
+              <input
+                class="score secured"
+                data-type="score"
+                type="number"
+                min="0"
+                data-game="game4"
+                data-slot="away"
+                disabled
+              />
+            </div>
+          </article>
+
+          <article class="match match--tall" data-game="game5">
+            <div class="match__header match__header--inline">
+              <span>Game 5</span>
+              <input
+                class="time-chip secured"
+                data-type="time"
+                data-game="game5"
+                placeholder="Time"
+                disabled
+              />
+            </div>
+            <div class="team" data-game="game5" data-slot="home">
+              <span class="seed">W4</span>
+              <input
+                class="team__name-input"
+                data-type="name"
+                data-game="game5"
+                data-slot="home"
+                data-derived="true"
+                readonly
+              />
+              <input
+                class="score secured"
+                data-type="score"
+                type="number"
+                min="0"
+                data-game="game5"
+                data-slot="home"
+                disabled
+              />
+            </div>
+            <div class="team" data-game="game5" data-slot="away">
+              <span class="seed">L3</span>
+              <input
+                class="team__name-input"
+                data-type="name"
+                data-game="game5"
+                data-slot="away"
+                data-derived="true"
+                readonly
+              />
+              <input
+                class="score secured"
+                data-type="score"
+                type="number"
+                min="0"
+                data-game="game5"
+                data-slot="away"
+                disabled
+              />
+            </div>
+          </article>
+          </div>
+        </div>
+
+        <div class="column column--finals">
+          <p class="column__title">Championship</p>
+
+          <div class="bracket-panel">
+
+          <article class="match match--wide" data-game="game6">
+            <div class="match__header match__header--inline">
+              <span>Game 6 · Championship</span>
+              <input
+                class="time-chip secured"
+                data-type="time"
+                data-game="game6"
+                placeholder="Time"
+                disabled
+              />
+            </div>
+            <div class="team" data-game="game6" data-slot="home">
+              <span class="seed">W3</span>
+              <input
+                class="team__name-input"
+                data-type="name"
+                data-game="game6"
+                data-slot="home"
+                data-derived="true"
+                readonly
+              />
+              <input
+                class="score secured"
+                data-type="score"
+                type="number"
+                min="0"
+                data-game="game6"
+                data-slot="home"
+                disabled
+              />
+            </div>
+            <div class="team" data-game="game6" data-slot="away">
+              <span class="seed">W5</span>
+              <input
+                class="team__name-input"
+                data-type="name"
+                data-game="game6"
+                data-slot="away"
+                data-derived="true"
+                readonly
+              />
+              <input
+                class="score secured"
+                data-type="score"
+                type="number"
+                min="0"
+                data-game="game6"
+                data-slot="away"
+              disabled
+            />
+          </div>
+          </article>
+
+          <section class="champion-card" id="championCard" hidden>
+            <header class="champion-card__header">
+              <div>
+                <p class="column__title">Trophy presentation</p>
+                <h2 id="championName">Champion TBD</h2>
+              </div>
+              <span class="trophy-icon">🏆</span>
+            </header>
+            <div id="championPlayersList" class="champion-player-list"></div>
+            <div class="champion-card__actions">
+              <button id="addPlayerButton" class="player-add secured" disabled>Add player</button>
+              <div class="mvp-card secured" id="mvpCard">
+                <label>
+                  Most Valuable Player
+                  <input
+                    id="mvpName"
+                    type="text"
+                    placeholder="MVP name"
+                    disabled
+                  />
+                </label>
+              </div>
+            </div>
+          </section>
+          </div>
+        </div>
+      </section>
+
+      <section class="admin-panel">
+        <div class="admin-panel__inputs">
+          <label>
+            Admin access code
+            <input id="adminCode" type="password" placeholder="Enter code" />
+          </label>
+          <button id="loginButton">Unlock editing</button>
+        </div>
+        <p id="statusMessage" class="status-message"></p>
+      </section>
+
+      <footer class="legend">
+        <p>
+          <strong>Legend:</strong> W = Winner, L = Loser. Enter seed names and scores as an admin and the
+          bracket will advance teams automatically.
+        </p>
+      </footer>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
